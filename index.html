@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards de Inglês</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .card {
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            position: relative;
+            margin: 0 auto 20px;
+        }
+
+        .card .front, .card .back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-size: 24px;
+        }
+
+        .card .front {
+            background-color: white;
+            z-index: 2;
+        }
+
+        .card .back {
+            background-color: #e0e0e0;
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .card.flipped .front {
+            transform: rotateY(180deg);
+        }
+
+        .card.flipped .back {
+            transform: rotateY(360deg);
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="front"></div>
+            <div class="back"></div>
+        </div>
+        <div class="buttons">
+            <button id="reveal-btn">Revelar</button>
+            <button id="next-btn">Próxima</button>
+        </div>
+    </div>
+
+    <script>
+        const card = document.querySelector('.card');
+        const front = document.querySelector('.front');
+        const back = document.querySelector('.back');
+        const revealBtn = document.getElementById('reveal-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        let flashcards = [
+            { english: 'Animal', portuguese: 'Animal' },
+            { english: 'Natural', portuguese: 'Natural' },
+            { english: 'Real', portuguese: 'Real' },
+            { english: 'Social', portuguese: 'Social' },
+            { english: 'Vital', portuguese: 'Vital' },
+            { english: 'Original', portuguese: 'Original' },
+            { english: 'Total', portuguese: 'Total' },
+            { english: 'Chocolate', portuguese: 'Chocolate' },
+            { english: 'Banana', portuguese: 'Banana' },
+            { english: 'Cinema', portuguese: 'Cinema' },
+            { english: 'Radio', portuguese: 'Rádio' },
+            { english: 'Crime', portuguese: 'Crime' },
+            { english: 'Familiar', portuguese: 'Familiar' },
+            { english: 'Zero', portuguese: 'Zero' },
+            { english: 'Really', portuguese: 'Realmente' },
+            { english: 'Basically', portuguese: 'Basicamente' },
+            { english: 'Historically', portuguese: 'Historicamente' },
+            { english: 'Automatically', portuguese: 'Automaticamente' },
+            { english: 'Orally', portuguese: 'Oralmente' },
+            { english: 'Naturally', portuguese: 'Naturalmente' },
+            { english: 'The city', portuguese: 'A cidade' },
+            { english: 'The university', portuguese: 'A universidade' },
+            { english: 'The honesty', portuguese: 'A honestidade' },
+            { english: 'The simplicity', portuguese: 'A simplicidade' },
+            { english: 'The velocity', portuguese: 'A velocidade' },
+            { english: 'Different', portuguese: 'Diferente' },
+            { english: 'President', portuguese: 'Presidente' },
+            { english: 'Recent', portuguese: 'Recente' },
+            { english: 'Component', portuguese: 'Componente' },
+            { english: 'Innocent', portuguese: 'Inocente' },
+            { english: 'Resident', portuguese: 'Residente' },
+            { english: 'Excellent', portuguese: 'Excelente' },
+            { english: 'Consistent', portuguese: 'Consistente' },
+            { english: 'Positive', portuguese: 'Positivo' },
+            { english: 'Executive', portuguese: 'Executivo' },
+            { english: 'Creative', portuguese: 'Criativo' },
+            { english: 'Competitive', portuguese: 'Competitivo' },
+            { english: 'Narrative', portuguese: 'Narrativa' },
+            { english: 'Motive', portuguese: 'Motivo' },
+            { english: 'Incentive', portuguese: 'Incentivo' },
+            { english: 'Religious', portuguese: 'Religioso' },
+            { english: 'Famous', portuguese: 'Famoso' },
+            { english: 'Mysterious', portuguese: 'Misterioso' },
+            { english: 'Generous', portuguese: 'Generoso' },
+            { english: 'Ambitious', portuguese: 'Ambicioso' },
+            { english: 'Possible', portuguese: 'Possível' },
+            { english: 'Responsible', portuguese: 'Responsável' },
+            { english: 'Impossible', portuguese: 'Impossível' },
+            { english: 'Terrible', portuguese: 'Terrível' },
+            { english: 'Vulnerable', portuguese: 'Vulnerável' },
+            { english: 'Comfortable', portuguese: 'Confortável' },
+            { english: 'Situation', portuguese: 'Situação' },
+            { english: 'Communication', portuguese: 'Comunicação' },
+            { english: 'Information', portuguese: 'Informação' },
+            { english: 'Education', portuguese: 'Educação' },
+            { english: 'Television', portuguese: 'Televisão' },
+            { english: 'Expression', portuguese: 'Expressão' },
+            { english: 'Conclusion', portuguese: 'Conclusão' },
+            { english: 'Mission', portuguese: 'Missão' },
+            { english: 'Dentist', portuguese: 'Dentista' },
+            { english: 'Communist', portuguese: 'Comunista' },
+            { english: 'Journalist', portuguese: 'Jornalista' },
+            { english: 'Specialist', portuguese: 'Especialista' },
+            { english: 'Artist', portuguese: 'Artista' },
+            { english: 'Economist', portuguese: 'Economista' },
+            { english: 'Feminist', portuguese: 'Feminista' }
+        ];
+
+        let currentCard = 0;
+        let shuffledIndices = [];
+
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+
+            // While there remain elements to shuffle.
+            while (currentIndex != 0) {
+
+                // Pick a remaining element.
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+            }
+
+            return array;
+        }
+
+        function getShuffledIndices() {
+            shuffledIndices = [...Array(flashcards.length).keys()];
+            shuffle(shuffledIndices);
+        }
+
+        function showCard() {
+            front.textContent = flashcards[shuffledIndices[currentCard]].english;
+            back.textContent = flashcards[shuffledIndices[currentCard]].portuguese;
+            card.classList.remove('flipped');
+        }
+
+        function revealCard() {
+            card.classList.add('flipped');
+        }
+
+        function nextCard() {
+            currentCard++;
+            if (currentCard >= shuffledIndices.length) {
+                currentCard = 0;
+                getShuffledIndices();
+            }
+            showCard();
+        }
+
+        revealBtn.addEventListener('click', revealCard);
+        nextBtn.addEventListener('click', nextCard);
+
+        // Show the first card
+        nextCard();
+    </script>
+
+</body>
+</html>
